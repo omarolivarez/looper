@@ -1,7 +1,7 @@
 # looper
 
-## Author: Omar Olivarez
-## Last Modified: 05/12/2021
+**Author:** Omar Olivarez  
+**Last Modified:** 05/12/2021
 
 # Description:  
 Make a GUI app  
