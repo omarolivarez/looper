@@ -25,6 +25,7 @@ class Looper(Frame):
         self.df = 0
         self.con = sqlite3.connect("looper.db")
         self.cur = self.con.cursor()
+        self.table_name = ""
         
     def initUI(self):        
         # this section sets which columns are the ones that move - weight is what will expand when expanded
@@ -60,9 +61,9 @@ class Looper(Frame):
         
     def popup_details(self):
         win = Toplevel()
-        win.wm_title("Import Details")
-        win.geometry("300x300")
-        win.minsize("300", "300")
+        win.wm_title("Details")
+        win.geometry("230x230") #  width by height
+        win.minsize("220", "230")
         win.rowconfigure(5, weight=1)
         win.columnconfigure(1, weight=1)
         v = IntVar()
@@ -97,9 +98,29 @@ class Looper(Frame):
         yes_rb = Radiobutton(win, text="Yes", variable=v, value=2)
         yes_rb.grid(row = 4, column = 1, pady=(5, 0), sticky = W)
     
-        b = ttk.Button(win, text="Okay", command=win.destroy)
+        b = ttk.Button(win, text="Okay", command= lambda:[win.destroy, self.create_table()])
         b.grid(row=5, column=1, sticky=S+W, pady=(5, 10), padx=(0, 10))
         
+    def create_table(self):
+        # NOTE: in a future feature, I need to know how to handle what happens if someone wants to run bootstrap for the same column and metric all over
+        # again given that I think in the current state it would just append to the previous results
+        setTableName()
+        print(self.table_name)
+        col_1 = self.col_var.upper() + "_"  + self.stat_var.upper() + "S"
+        
+        """self.cur.execute('SELECT * FROM ?', (self.table_name))
+        entry = self.cur.fetchone()
+        if entry is None:
+            self.cur.execute('CREATE TABLE ? ', ('a', 'b', 'c'))
+            print('New table created')
+        else:
+            print('Table already exists')
+        return"""
+        
+        self.cur.execute("""CREATE TABLE [IF NOT EXISTS] ? (
+                                ID integer PRIMARY KEY
+                                ? integer""", (self.table_name, col_1))
+    
     def getFont(self):
         return
         #col = self.font_var.get()
@@ -107,6 +128,9 @@ class Looper(Frame):
         
     def setPath(self, p):
         self.path = p
+        
+    def setTableName(self):
+        self.table_name = self.col_var.upper() + "_" + self.stat_var.upper() + "_"  + self.reps.upper()
     
     def getPath(self):
         return self.path
