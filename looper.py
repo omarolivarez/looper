@@ -13,6 +13,7 @@ from tkinter import scrolledtext
 import os
 import datetime
 import sqlite3
+import bstrap as bs
 
 
 class Looper(Frame):
