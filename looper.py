@@ -21,6 +21,7 @@ class Looper(Frame):
         super().__init__()
         self.initUI()
         self.path = ""
+        self.reps_path = ""
         #self.starting_row = 0
         self.df = 0
         self.con = sqlite3.connect("looper.db")
@@ -57,7 +58,15 @@ class Looper(Frame):
         d = pd.read_csv(self.getPath())
         self.setDataframe(d)
         self.popup_details()
-        print("HERE")
+        #print("HERE")
+        
+    def import_reps(self):
+        print("IMPORT REPS()")
+        if self.radio == 2:
+            reps_file_path = askopenfilename()
+            self.set_reps_path(reps_file_path)# .set(csv_file_path)
+            f = open(self.get_reps_path(), "r")
+            self.set_reps(f)
         
     def popup_details(self):
         win = Toplevel()
@@ -66,7 +75,8 @@ class Looper(Frame):
         win.minsize("220", "230")
         win.rowconfigure(5, weight=1)
         win.columnconfigure(1, weight=1)
-        v = IntVar()
+        self.radio = IntVar() # use this to store the value of the radio button
+        self.radio.set(1)
     
         l = Label(win, text="Column to bootstrap")
         l.grid(row=0, column=0, pady=(10, 0), padx=(10, 0))
@@ -93,20 +103,22 @@ class Looper(Frame):
         
         reps_file_label = Label(win, text="Upload reps file?")
         reps_file_label.grid(row=3, column=0, sticky=E, pady=(5, 0))
-        no_rb = Radiobutton(win, text="No", variable=v, value=1)
+        no_rb = Radiobutton(win, text="No", variable=self.radio, value=1)
         no_rb.grid(row = 3, column = 1, pady=(5, 0), sticky = W)
-        yes_rb = Radiobutton(win, text="Yes", variable=v, value=2)
-        yes_rb.grid(row = 4, column = 1, pady=(5, 0), sticky = W)
+        self.yes_rb = Radiobutton(win, text="Yes", variable=self.radio, value=2)
+        self.yes_rb.grid(row = 4, column = 1, pady=(5, 0), sticky = W)
     
-        b = ttk.Button(win, text="Okay", command= lambda:[win.destroy, self.create_table()])
+        b = Button(win, text="Next", command= self.create_table) #lambda:[win.destroy, self.create_table, self.import_reps]
         b.grid(row=5, column=1, sticky=S+W, pady=(5, 10), padx=(0, 10))
         
     def create_table(self):
+        print("CREATE TABLE()")
         # NOTE: in a future feature, I need to know how to handle what happens if someone wants to run bootstrap for the same column and metric all over
         # again given that I think in the current state it would just append to the previous results
-        setTableName()
+        self.set_table_name()
         print(self.table_name)
-        col_1 = self.col_var.upper() + "_"  + self.stat_var.upper() + "S"
+        #col_1 = self.col_var.get().upper() + "_"  + self.stat_var.get().upper() + "S"
+        #print(col_1)
         
         """self.cur.execute('SELECT * FROM ?', (self.table_name))
         entry = self.cur.fetchone()
@@ -116,10 +128,10 @@ class Looper(Frame):
         else:
             print('Table already exists')
         return"""
-        
-        self.cur.execute("""CREATE TABLE [IF NOT EXISTS] ? (
-                                ID integer PRIMARY KEY
-                                ? integer""", (self.table_name, col_1))
+        create_table_query = "CREATE TABLE IF NOT EXISTS " + self.table_name + " (id integer PRIMARY KEY,statistic integer);"
+        #create_table_query = "CREATE TABLE IF NOT EXISTS liwc_means (id integer PRIMARY KEY,statistic integer);"
+        print(create_table_query)
+        self.cur.execute(create_table_query)
     
     def getFont(self):
         return
@@ -129,11 +141,21 @@ class Looper(Frame):
     def setPath(self, p):
         self.path = p
         
-    def setTableName(self):
-        self.table_name = self.col_var.upper() + "_" + self.stat_var.upper() + "_"  + self.reps.upper()
+    def set_table_name(self):
+        self.table_name = self.col_var.get().upper() + "_" + self.stat_var.get().upper() + "S"  # 
     
     def getPath(self):
         return self.path
+    
+    def set_reps_path(self, p):
+        self.reps_path = p
+        
+    def get_reps_path(self):
+        return self.reps_path
+        
+    def set_reps(self, f):
+        r = f.readline()
+        self.reps = int(r)
     
     def setDataframe(self, dataframe):
         self.df = dataframe
