@@ -1,1 +1,5 @@
-5
+[main]
+past_reps = 5
+total_reps = 100
+stat = mean
+column = liwc

@@ -14,6 +14,7 @@ import os
 import datetime
 import sqlite3
 import bstrap as bs
+from configparser import ConfigParser
 
 
 class Looper(Frame):
@@ -77,36 +78,38 @@ class Looper(Frame):
         win.columnconfigure(1, weight=1)
         self.radio = IntVar() # use this to store the value of the radio button
         self.radio.set(1)
+        
+        reps_file_label = Label(win, text="Upload reps file?")
+        reps_file_label.grid(row=0, column=0, sticky=E, pady=(5, 0))
+        no_rb = Radiobutton(win, text="No", variable=self.radio, value=1)
+        no_rb.grid(row = 0, column = 1, pady=(5, 0), sticky = W)
+        self.yes_rb = Radiobutton(win, text="Yes", variable=self.radio, value=2)
+        self.yes_rb.grid(row = 1, column = 1, pady=(5, 0), sticky = W)
     
-        l = Label(win, text="Column to bootstrap")
-        l.grid(row=0, column=0, pady=(10, 0), padx=(10, 0))
+        l = Label(win, text="Column to bootstrap", state = 'disabled')
+        l.grid(row=2, column=0, pady=(10, 0), padx=(10, 0))
         COL_OPTS= list(self.df)
         self.col_var = StringVar(self)
         self.col_var.set(COL_OPTS[0]) # default value
-        dropdown_col = OptionMenu(win, self.col_var, *COL_OPTS) #, command=lambda _: self.getFont()
+        dropdown_col = OptionMenu(win, self.col_var, *COL_OPTS, state = 'disabled') #, command=lambda _: self.getFont()
         dropdown_col.config(indicatoron=False)
-        dropdown_col.grid(row = 0, column=1, sticky = W, pady=(10, 0)) 
+        dropdown_col.grid(row = 2, column=1, sticky = W, pady=(10, 0)) 
         
-        stats_label = Label(win, text="Statistic")
-        stats_label.grid(row=1, column=0, sticky=E, pady=(5, 0))
+        stats_label = Label(win, text="Statistic", state = 'disabled')
+        stats_label.grid(row=3, column=0, sticky=E, pady=(5, 0))
         STAT_OPTS= ['Mean', 'Median', 'St Dev']
         self.stat_var = StringVar(self)
         self.stat_var.set(STAT_OPTS[0]) # default value
-        dropdown_stat = OptionMenu(win, self.stat_var, *STAT_OPTS)
+        dropdown_stat = OptionMenu(win, self.stat_var, *STAT_OPTS, state = 'disabled')
         dropdown_stat.config(indicatoron=False)
-        dropdown_stat.grid(row = 1, column=1, sticky = W, pady=(5, 0)) 
+        dropdown_stat.grid(row = 3, column=1, sticky = W, pady=(5, 0)) 
         
-        reps_label = Label(win, text="Repetitions")
-        reps_label.grid(row=2, column=0, sticky=E, pady=(5, 0))
-        self.reps = Entry(win, width='12')
-        self.reps.grid(row=2, column=1, sticky=W, pady=(5, 0))
+        reps_label = Label(win, text="Repetitions", state = 'disabled')
+        reps_label.grid(row=4, column=0, sticky=E, pady=(5, 0))
+        self.reps = Entry(win, width='12', state = 'disabled')
+        self.reps.grid(row=4, column=1, sticky=W, pady=(5, 0))
         
-        reps_file_label = Label(win, text="Upload reps file?")
-        reps_file_label.grid(row=3, column=0, sticky=E, pady=(5, 0))
-        no_rb = Radiobutton(win, text="No", variable=self.radio, value=1)
-        no_rb.grid(row = 3, column = 1, pady=(5, 0), sticky = W)
-        self.yes_rb = Radiobutton(win, text="Yes", variable=self.radio, value=2)
-        self.yes_rb.grid(row = 4, column = 1, pady=(5, 0), sticky = W)
+        
     
         b = Button(win, text="Next", command= self.create_table) #lambda:[win.destroy, self.create_table, self.import_reps]
         b.grid(row=5, column=1, sticky=S+W, pady=(5, 10), padx=(0, 10))
