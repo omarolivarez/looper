@@ -9,8 +9,8 @@ That creates a sqlite db upon first open
 That takes in a dataframe/csv  
 You select which column you want to bootstrap  
 You select how many repetitions you want  
-Optional: you upload a reps file that says how many reps previously ran
-The system will start bootstrapping
+Optional: you upload a reps file that says how many reps previously ran  
+The system will start bootstrapping  
 And create a table for each new bootstrapping statistic  
 It will show progress toward your number of reps as a progress bar  
 It will detect when your battery is running low and automatically stop  
