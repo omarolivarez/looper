@@ -23,6 +23,8 @@ class Looper(Frame):
         self.path = ""
         #self.starting_row = 0
         self.df = 0
+        self.con = sqlite3.connect("looper.db")
+        self.cur = self.con.cursor()
         
     def initUI(self):        
         # this section sets which columns are the ones that move - weight is what will expand when expanded
